@@ -9,7 +9,7 @@ new FormModel {
 				name: "scrollPane1"
 				add( new FormComponent( "javax.swing.JTextArea" ) {
 					name: "textArea1"
-					"text": "[\n  {\n    \"name\": \"test\",\n    \"url\": \" https://iqiyi.cdn9-okzy.com/20210124/21387_698f81a5/index.m3u8\",\n    \"path\": \"/media/bluesky/Share/TuringTutorials/test/\",\n    \"key\": null,\n    \"core\": 8,\n    \"tryNum\": 16\n  }\n]"
+					"text": "[\n  {\n    \"name\": \"\",\n    \"url\": \"\",\n    \"path\": \"\",\n    \"key\": null,\n    \"core\": 8,\n    \"tryNum\": 16\n  }\n]"
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
 				"y": 0

@@ -64,9 +64,8 @@ public interface Resolve {
      * @param fileName
      * @return
      */
-    default boolean writeFileAsTs(byte[] bytes, String tempPath, String fileName) {
-        String linshi = getRandom();
-        File file = new File(tempPath + linshi);
+    default boolean writeFileAsTs(byte[] bytes, String tempPath) {
+        File file = new File(tempPath);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
@@ -75,8 +74,8 @@ public interface Resolve {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (file.exists())
-            EncodeVideo.encodeCopy(file, new File(tempPath + fileName));
+//        if (file.exists())
+//            EncodeVideo.encodeCopy(file, new File(tempPath + fileName));
         return file.exists() ? file.isFile() : file.exists();
     }
 

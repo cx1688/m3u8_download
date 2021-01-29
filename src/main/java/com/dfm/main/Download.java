@@ -132,7 +132,7 @@ public class Download {
                     File target = new File(paramInfo.getPath() + File.separator + paramInfo.getName() + ".mp4");
                     if (segmentFileInfos.size() == source.listFiles().length) {
                         //合并文件
-                        MergeUtils.getINSTANCE().merge(source, target, true, true);
+                        MergeUtils.getINSTANCE().merge(source, target, false, true);
                         break;
                     }
                 }
@@ -172,7 +172,7 @@ public class Download {
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
                 log.info("缓存路径：{}", tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts");
-                segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator, resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
+                segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
                 log.info("下载完成：{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {

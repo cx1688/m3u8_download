@@ -71,9 +71,10 @@ public class MergeUtils {
                                 file.delete();
 
                         }
-//                        File file = new File(savePath.getParent() + File.separator + savePath.getName().substring(0, savePath.getName().lastIndexOf(".")) + "_output" + savePath.getName().substring(savePath.getName().lastIndexOf(".")));
-//                        if(isCodec)
-//                            EncodeVideo.encodeCopy(savePath,file);
+                        File file = new File(savePath.getParent() + File.separator + savePath.getName().substring(0, savePath.getName().lastIndexOf(".")) + "_output" + savePath.getName().substring(savePath.getName().lastIndexOf(".")));
+                        if(isCodec)
+                            EncodeVideo.encodeCopy(savePath,file);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

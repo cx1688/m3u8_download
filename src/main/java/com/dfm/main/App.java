@@ -32,7 +32,7 @@ public class App {
     }
 
     public static void start(String content) throws JsonProcessingException {
-        content = content.replace(" ","");
+        content = content.replace(" ", "");
         if (threadPoolExecutor == null || threadPoolExecutor.isShutdown()) {
             threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("taskName", new ThreadGroup("task")));
             M3u8DownloadTool.state = 1;
