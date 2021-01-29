@@ -1,11 +1,13 @@
 package com.dfm.main;
 
 import com.dfm.beans.ParamInfo;
+import com.dfm.form.M3u8DownloadTool;
 import com.dfm.utils.JsonUtils;
 import com.dfm.utils.ThreadFacotryImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,19 +25,42 @@ public class App {
 
 
     public static void main(String[] args) throws IOException {
+        M3u8DownloadTool m3u8DownloadTool = new M3u8DownloadTool();
+        m3u8DownloadTool.setVisible(true);
+//        File file = new File("2.json");
+//        FileInputStream fileInputStream = new FileInputStream(file);
+//        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+//        StringBuilder sb = new StringBuilder();
+//        bufferedReader.lines().forEach(sb::append);
+//        String content = sb.toString().replaceAll(" ", "");
+//        List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
+//        paramInfos.stream().forEach(paramInfo -> {
+//          threadPoolExecutor.execute(()->{
+//              Download download = new Download(paramInfo);
+//              download.start();
+//          });
+//        });
+//
+//        while (true) {
+//            if (threadPoolExecutor.getCompletedTaskCount() == paramInfos.size()) {
+//                threadPoolExecutor.shutdown();
+//                break;
+//            }
+//            try {
+//                TimeUnit.MILLISECONDS.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+    }
 
-        File file = new File("2.json");
-        FileInputStream fileInputStream = new FileInputStream(file);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-        StringBuilder sb = new StringBuilder();
-        bufferedReader.lines().forEach(sb::append);
-        String content = sb.toString().replaceAll(" ", "");
+    public static void start(String content) throws JsonProcessingException {
         List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
         paramInfos.stream().forEach(paramInfo -> {
-          threadPoolExecutor.execute(()->{
-              Download download = new Download(paramInfo);
-              download.start();
-          });
+            threadPoolExecutor.execute(() -> {
+                Download download = new Download(paramInfo);
+                download.start();
+            });
         });
 
         while (true) {

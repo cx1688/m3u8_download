@@ -8,10 +8,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -38,6 +37,26 @@ public class Download {
     public Download(ParamInfo paramInfo) {
         this.paramInfo = paramInfo;
         init();
+    }
+
+    private void check(ParamInfo paramInfo) {
+        if (paramInfo != null) {
+            if (StringUtils.isBlank(paramInfo.getUrl())) {
+                JOptionPane.showMessageDialog(null, "url不可为空");
+            }
+            if (StringUtils.isBlank(paramInfo.getName())) {
+                JOptionPane.showMessageDialog(null, "name不可为空");
+            }
+            if (StringUtils.isBlank(paramInfo.getPath())) {
+                JOptionPane.showMessageDialog(null, "path不可为空");
+            }
+            if (paramInfo.getTryNum() <= 0) {
+                paramInfo.setTryNum(255);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "参数不可为空");
+        }
+
     }
 
     private void init() {
@@ -100,6 +119,7 @@ public class Download {
 
     /**
      * 关闭任务
+     *
      * @param paramInfo
      * @param segmentFileInfos
      */
@@ -125,12 +145,13 @@ public class Download {
 
     /**
      * 获取字节流
+     *
      * @param baseUrl
      * @param segmentFileInfo
      * @return
      * @throws Exception
      */
-    private byte[] getBytes(String baseUrl,SegmentFileInfo segmentFileInfo) throws Exception {
+    private byte[] getBytes(String baseUrl, SegmentFileInfo segmentFileInfo) throws Exception {
         byte[] bytes = HttpUtils.getBytes(resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
         if (StringUtils.isNotBlank(paramInfo.getKey()) && "QINIU-PROTECTION-10".equals(segmentFileInfo.getMethod())) {
             bytes = AESUtils.decrypt(bytes, AESUtils.loadSecretKey(paramInfo.getKey()), segmentFileInfo.getIv());
@@ -142,15 +163,16 @@ public class Download {
 
     /**
      * 下载与重试
+     *
      * @param baseUrl
      * @param segmentFileInfo
      */
     private void downAndTry(String baseUrl, SegmentFileInfo segmentFileInfo) {
         try {
-            byte[] bytes = getBytes(baseUrl,segmentFileInfo);
+            byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
                 log.info("缓存路径：{}", tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".mp4");
-                segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes,tempPath + File.separator + paramInfo.getName() + File.separator,resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".mp4"));
+                segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator, resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".mp4"));
                 log.info("下载完成：{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {
