@@ -29,31 +29,6 @@ public class App {
         M3u8DownloadTool m3u8DownloadTool = new M3u8DownloadTool();
         m3u8DownloadTool.setVisible(true);
         m3u8DownloadTool.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        File file = new File("2.json");
-//        FileInputStream fileInputStream = new FileInputStream(file);
-//        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-//        StringBuilder sb = new StringBuilder();
-//        bufferedReader.lines().forEach(sb::append);
-//        String content = sb.toString().replaceAll(" ", "");
-//        List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
-//        paramInfos.stream().forEach(paramInfo -> {
-//          threadPoolExecutor.execute(()->{
-//              Download download = new Download(paramInfo);
-//              download.start();
-//          });
-//        });
-//
-//        while (true) {
-//            if (threadPoolExecutor.getCompletedTaskCount() == paramInfos.size()) {
-//                threadPoolExecutor.shutdown();
-//                break;
-//            }
-//            try {
-//                TimeUnit.MILLISECONDS.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     public static void start(String content) throws JsonProcessingException {
