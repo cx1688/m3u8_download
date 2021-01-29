@@ -33,7 +33,6 @@ public class App {
         List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
         paramInfos.stream().forEach(paramInfo -> {
           threadPoolExecutor.execute(()->{
-//              paramInfo.setKey(hexToStr(KEY_30));
               Download download = new Download(paramInfo);
               download.start();
           });
