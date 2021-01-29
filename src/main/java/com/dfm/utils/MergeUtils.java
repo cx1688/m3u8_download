@@ -13,9 +13,6 @@ import java.util.Arrays;
  * @create: 2020-12-25 09:57
  */
 public class MergeUtils {
-    //    public static void main(String[] args) {
-//        new MergeUtils().merge(new File("D:\\tempC"), new File("D:/1.mp4"), false);
-//    }
     private static final MergeUtils INSTANCE = new MergeUtils();
 
     public MergeUtils() {

@@ -20,11 +20,6 @@ import java.util.UUID;
  * @create: 2020-12-25 12:30
  */
 public class EncodeVideo {
-    public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println(UUID.randomUUID());
-    }
-
-
     public static void batchProcess(String path) {
         File file = new File(path);
         List<File> allFile = getAllFile(file);
