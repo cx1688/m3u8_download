@@ -1,7 +1,7 @@
 package com.dfm.main;
 
 import com.dfm.beans.ParamInfo;
-import com.dfm.form.M3u8DownloadTool;
+import com.dfm.form.MainWindow;
 import com.dfm.utils.JsonUtils;
 import com.dfm.utils.ThreadFacotryImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,16 +26,16 @@ public class App {
 
 
     public static void main(String[] args) throws IOException {
-        M3u8DownloadTool m3u8DownloadTool = new M3u8DownloadTool();
-        m3u8DownloadTool.setVisible(true);
-        m3u8DownloadTool.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MainWindow mainWindow = new MainWindow();
+        mainWindow.setVisible(true);
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void start(String content) throws JsonProcessingException {
         content = content.replace(" ", "");
         if (threadPoolExecutor == null || threadPoolExecutor.isShutdown()) {
             threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("taskName", new ThreadGroup("task")));
-            M3u8DownloadTool.state = 1;
+            MainWindow.setTaskState(1);
         }
         List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
         try {
@@ -49,7 +49,7 @@ public class App {
             while (true) {
                 if (threadPoolExecutor.getCompletedTaskCount() == paramInfos.size()) {
                     threadPoolExecutor.shutdown();
-                    M3u8DownloadTool.state = 0;
+                    MainWindow.setTaskState(0);
                     break;
                 }
                 try {
