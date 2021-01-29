@@ -59,7 +59,7 @@ public class App {
                 }
             }
         } catch (Exception e) {
-            M3u8DownloadTool.state = 0;
+            MainWindow.setTaskState(0);
         }
     }
 
