@@ -7,6 +7,7 @@ import com.dfm.utils.ThreadFacotryImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,12 +22,13 @@ import java.util.concurrent.TimeUnit;
  * @create: 2020-12-24 16:58
  */
 public class App {
-    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("taskName", new ThreadGroup("task")));
+    private static ThreadPoolExecutor threadPoolExecutor;
 
 
     public static void main(String[] args) throws IOException {
         M3u8DownloadTool m3u8DownloadTool = new M3u8DownloadTool();
         m3u8DownloadTool.setVisible(true);
+        m3u8DownloadTool.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        File file = new File("2.json");
 //        FileInputStream fileInputStream = new FileInputStream(file);
 //        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
@@ -55,24 +57,34 @@ public class App {
     }
 
     public static void start(String content) throws JsonProcessingException {
+        content = content.replace(" ","");
+        if (threadPoolExecutor == null || threadPoolExecutor.isShutdown()) {
+            threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("taskName", new ThreadGroup("task")));
+            M3u8DownloadTool.state = 1;
+        }
         List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
-        paramInfos.stream().forEach(paramInfo -> {
-            threadPoolExecutor.execute(() -> {
-                Download download = new Download(paramInfo);
-                download.start();
+        try {
+            paramInfos.stream().forEach(paramInfo -> {
+                threadPoolExecutor.execute(() -> {
+                    Download download = new Download(paramInfo);
+                    download.start();
+                });
             });
-        });
 
-        while (true) {
-            if (threadPoolExecutor.getCompletedTaskCount() == paramInfos.size()) {
-                threadPoolExecutor.shutdown();
-                break;
+            while (true) {
+                if (threadPoolExecutor.getCompletedTaskCount() == paramInfos.size()) {
+                    threadPoolExecutor.shutdown();
+                    M3u8DownloadTool.state = 0;
+                    break;
+                }
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            try {
-                TimeUnit.MILLISECONDS.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            M3u8DownloadTool.state = 0;
         }
     }
 
