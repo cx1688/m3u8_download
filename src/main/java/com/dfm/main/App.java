@@ -25,9 +25,11 @@ public class App {
     private static ThreadPoolExecutor threadPoolExecutor;
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         MainWindow mainWindow = new MainWindow();
+
         mainWindow.setVisible(true);
+        mainWindow.setDefaultLookAndFeelDecorated(true);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
