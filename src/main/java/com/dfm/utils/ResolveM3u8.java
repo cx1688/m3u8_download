@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 public class ResolveM3u8 implements Resolve {
     private static final ResolveM3u8 INSTANCE = new ResolveM3u8();
 
+    public static void main(String[] args) {
+        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("http://video2.posh-hotels.com:8091/20200614/wanz-953/index.m3u8");
+        System.out.println(m3u8Info);
+    }
     private ResolveM3u8() {
     }
 

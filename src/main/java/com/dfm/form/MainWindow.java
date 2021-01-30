@@ -55,6 +55,8 @@ public class MainWindow extends JFrame {
         scrollPane1 = new JScrollPane();
         textArea1 = new JTextArea();
         buttonBar = new JPanel();
+        scrollPane2 = new JScrollPane();
+        textArea2 = new JTextArea();
         okButton = new JButton();
 
         //======== this ========
@@ -65,12 +67,12 @@ public class MainWindow extends JFrame {
         //======== dialogPane ========
         {
             dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
-            dialogPane.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border
-            .EmptyBorder(0,0,0,0), "JFor\u006dDesi\u0067ner \u0045valu\u0061tion",javax.swing.border.TitledBorder.CENTER,javax
-            .swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dia\u006cog",java.awt.Font.BOLD,
-            12),java.awt.Color.red),dialogPane. getBorder()));dialogPane. addPropertyChangeListener(new java.beans
-            .PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e){if("bord\u0065r".equals(e.
-            getPropertyName()))throw new RuntimeException();}});
+            dialogPane.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.
+            border.EmptyBorder(0,0,0,0), "JF\u006frmDesi\u0067ner Ev\u0061luatio\u006e",javax.swing.border.TitledBorder.CENTER
+            ,javax.swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dialo\u0067",java.awt.Font
+            .BOLD,12),java.awt.Color.red),dialogPane. getBorder()));dialogPane. addPropertyChangeListener(
+            new java.beans.PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e){if("borde\u0072"
+            .equals(e.getPropertyName()))throw new RuntimeException();}});
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
@@ -79,6 +81,9 @@ public class MainWindow extends JFrame {
 
                 //======== scrollPane1 ========
                 {
+
+                    //---- textArea1 ----
+                    textArea1.setText("[\n  {\n    \"name\": \"test\",\n    \"url\": \" https://iqiyi.cdn9-okzy.com/20210124/21387_698f81a5/index.m3u8\",\n    \"path\": \"/media/bluesky/Share/TuringTutorials/test/\",\n    \"key\": null,\n    \"core\": 8,\n    \"tryNum\": 16\n  }\n]");
                     scrollPane1.setViewportView(textArea1);
                 }
                 contentPanel.add(scrollPane1);
@@ -108,6 +113,14 @@ public class MainWindow extends JFrame {
                 ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 80};
                 ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0};
 
+                //======== scrollPane2 ========
+                {
+                    scrollPane2.setViewportView(textArea2);
+                }
+                buttonBar.add(scrollPane2, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 0, 5), 0, 0));
+
                 //---- okButton ----
                 okButton.setText("\u89e3\u6790\u4e0b\u8f7d");
                 okButton.addActionListener(e -> okButtonActionPerformed(e));
@@ -130,6 +143,8 @@ public class MainWindow extends JFrame {
     private JScrollPane scrollPane1;
     private JTextArea textArea1;
     private JPanel buttonBar;
+    private JScrollPane scrollPane2;
+    private JTextArea textArea2;
     private JButton okButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
