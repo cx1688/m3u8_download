@@ -122,6 +122,7 @@ public class ResolveM3u8 implements Resolve {
             List<SegmentFileInfo> segmentFileInfos = new LinkedList<>();
             String tempMethod = null, tempKey = null;
             for (int i = 0; i < strs.length; i++) {
+
                 String key = null;
 //            Matcher regex = regex("(?=[/|http]).*[.ts|mp4]", split[i]);
                 Matcher regex = regex("^(\\S).*(.ts|ts)$", strs[i]);
@@ -168,7 +169,7 @@ public class ResolveM3u8 implements Resolve {
                     m3u8Info.setBaseUrl(baseUrl);
                 }
                 if (segmentFileInfos.get(0).getUrl().contains(".m3u8")) {
-                    return resolveByRegx(repleaceUrl(m3u8Info.getBaseUrl() + segmentFileInfos.get(0).getUrl()));
+                    return resolveByCommon(repleaceUrl(m3u8Info.getBaseUrl() + segmentFileInfos.get(0).getUrl()));
                 }
             }
             m3u8Info.setSegmentFileInfos(segmentFileInfos);

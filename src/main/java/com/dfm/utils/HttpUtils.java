@@ -1,14 +1,14 @@
 package com.dfm.utils;
 
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -19,6 +19,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: m3u8_project
@@ -27,9 +28,7 @@ import java.security.cert.X509Certificate;
  * @create: 2020-12-23 15:02
  */
 public class HttpUtils {
-    public static void main(String[] args) throws IOException {
-        System.out.println(get("http://iqiyi.cdn9-okzy.com/20210124/21387_698f81a5/index.m3u8"));
-    }
+
 
     public static String get(String url) throws IOException {
         Response response = request(url);
@@ -71,8 +70,17 @@ public class HttpUtils {
     public static Response request(String url) throws IOException {
         OkHttpClient okHttpClient = null;
         try {
-            okHttpClient = new OkHttpClient.Builder().sslSocketFactory(getSSLSocketFactory(), getX509TrustManager()).build();
-            Request request = new Request.Builder().url(url).build();
+            okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15,TimeUnit.SECONDS)
+                    .writeTimeout(15,TimeUnit.SECONDS)
+                    .followSslRedirects(true)
+                    .sslSocketFactory(getSSLSocketFactory(), getX509TrustManager()).build();
+
+            Request request = new Request.Builder()
+                    .addHeader("accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                    .addHeader("user-agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36")
+                    .url(url).build();
             Call call = okHttpClient.newCall(request);
             return call.execute();
         } catch (NoSuchAlgorithmException e) {

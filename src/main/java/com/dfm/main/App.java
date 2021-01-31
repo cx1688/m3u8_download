@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,7 +32,7 @@ public class App {
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public static void start(String content) throws JsonProcessingException {
+    public static void start(String content, String key) throws JsonProcessingException {
         content = content.replace(" ", "");
         if (threadPoolExecutor == null || threadPoolExecutor.isShutdown()) {
             threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("taskName", new ThreadGroup("task")));
@@ -43,6 +42,9 @@ public class App {
         try {
             paramInfos.stream().forEach(paramInfo -> {
                 threadPoolExecutor.execute(() -> {
+                    if (StringUtils.isNotBlank(key)) {
+                        paramInfo.setKey(hexToStr(key));
+                    }
                     Download download = new Download(paramInfo);
                     download.start();
                 });
@@ -85,6 +87,6 @@ public class App {
             }
             bytes[i] = (byte) a;
         }
-        return new String(bytes);
+        return bys.length == 1 ? key : new String(bytes);
     }
 }
