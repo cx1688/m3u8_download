@@ -117,7 +117,6 @@ public interface Resolve {
         return "";
     }
 
-    M3u8Info resolveByRegx(String m3u8Url);
 
     M3u8Info resolveByCommon(String m3u8Url);
 //    M3u8Info resolve(String m3u8Url,String mainUrl);
