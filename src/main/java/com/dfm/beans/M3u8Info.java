@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class M3u8Info implements Serializable {
     private List<SegmentFileInfo>segmentFileInfos;
-    private String baseUrl;
+    private String baseUrl="";
 
     public List<SegmentFileInfo> getSegmentFileInfos() {
         return segmentFileInfos;

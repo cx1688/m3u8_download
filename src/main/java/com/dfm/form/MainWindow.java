@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import javax.swing.*;
 import javax.swing.border.*;
 
+
 /**
  * @author unknown
  */
@@ -55,32 +56,32 @@ public class MainWindow extends JFrame {
         scrollPane1 = new JScrollPane();
         textArea1 = new JTextArea();
         buttonBar = new JPanel();
-        desktopPane1 = new JDesktopPane();
+        panel1 = new JPanel();
+        label1 = new JLabel();
+        textField1 = new JTextField();
+        okButton = new JButton();
         scrollPane2 = new JScrollPane();
         textArea2 = new JTextArea();
-        okButton = new JButton();
 
         //======== this ========
         setTitle("M3u8Download");
         Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 
         //======== dialogPane ========
         {
             dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
-            dialogPane.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (
-            new javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion"
-            , javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM
-            , new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 )
-            , java. awt. Color. red) ,dialogPane. getBorder( )) ); dialogPane. addPropertyChangeListener (
-            new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
-            ) {if ("\u0062order" .equals (e .getPropertyName () )) throw new RuntimeException( )
-            ; }} );
+            dialogPane.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
+            . EmptyBorder( 0, 0, 0, 0) , "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax. swing. border. TitledBorder. CENTER, javax
+            . swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,
+            12 ), java. awt. Color. red) ,dialogPane. getBorder( )) ); dialogPane. addPropertyChangeListener (new java. beans
+            . PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r" .equals (e .
+            getPropertyName () )) throw new RuntimeException( ); }} );
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
             {
-                contentPanel.setLayout(null);
+                contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 
                 //======== scrollPane1 ========
                 {
@@ -90,22 +91,6 @@ public class MainWindow extends JFrame {
                     scrollPane1.setViewportView(textArea1);
                 }
                 contentPanel.add(scrollPane1);
-                scrollPane1.setBounds(0, 0, 705, 420);
-
-                {
-                    // compute preferred size
-                    Dimension preferredSize = new Dimension();
-                    for(int i = 0; i < contentPanel.getComponentCount(); i++) {
-                        Rectangle bounds = contentPanel.getComponent(i).getBounds();
-                        preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-                        preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-                    }
-                    Insets insets = contentPanel.getInsets();
-                    preferredSize.width += insets.right;
-                    preferredSize.height += insets.bottom;
-                    contentPanel.setMinimumSize(preferredSize);
-                    contentPanel.setPreferredSize(preferredSize);
-                }
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -115,28 +100,44 @@ public class MainWindow extends JFrame {
                 buttonBar.setLayout(new GridBagLayout());
                 ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 80};
                 ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0};
-                buttonBar.add(desktopPane1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+
+                //======== panel1 ========
+                {
+                    panel1.setLayout(new BoxLayout(panel1, BoxLayout.X_AXIS));
+
+                    //---- label1 ----
+                    label1.setText("\u5916\u90e8Key:");
+                    label1.setPreferredSize(new Dimension(75, 20));
+                    label1.setHorizontalTextPosition(SwingConstants.LEADING);
+                    label1.setHorizontalAlignment(SwingConstants.CENTER);
+                    panel1.add(label1);
+                    panel1.add(textField1);
+                }
+                buttonBar.add(panel1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 5, 5), 0, 0));
-
-                //======== scrollPane2 ========
-                {
-                    scrollPane2.setViewportView(textArea2);
-                }
-                buttonBar.add(scrollPane2, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- okButton ----
                 okButton.setText("\u89e3\u6790\u4e0b\u8f7d");
                 okButton.addActionListener(e -> okButtonActionPerformed(e));
-                buttonBar.add(okButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
+
+                //======== scrollPane2 ========
+                {
+
+                    //---- textArea2 ----
+                    textArea2.setPreferredSize(new Dimension(1, 100));
+                    scrollPane2.setViewportView(textArea2);
+                }
+                buttonBar.add(scrollPane2, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
-        contentPane.add(dialogPane, BorderLayout.CENTER);
+        contentPane.add(dialogPane);
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -149,9 +150,11 @@ public class MainWindow extends JFrame {
     private JScrollPane scrollPane1;
     private JTextArea textArea1;
     private JPanel buttonBar;
-    private JDesktopPane desktopPane1;
+    private JPanel panel1;
+    private JLabel label1;
+    private JTextField textField1;
+    private JButton okButton;
     private JScrollPane scrollPane2;
     private JTextArea textArea2;
-    private JButton okButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -27,7 +27,7 @@ public class Download {
     private ThreadPoolExecutor threadPoolExecutor;
     private Resolve resolve = ResolveM3u8.getINSTANCE();
     //下载缓存目录
-    private String tempPath = "/media/bluesky/Share/TuringTutorials/temp";
+    private String tempPath = "temp";
     private String dataPath = "data";
 
     private ParamInfo paramInfo;

@@ -24,7 +24,7 @@ public class ResolveM3u8 implements Resolve {
     }
 
     public static void main(String[] args) {
-        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("http://video2.posh-hotels.com:8091/20200614/wanz-953/index.m3u8");
+        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://ip167799482.ahcdn.com/key=4I+E7lcQ9BnLhbZpI-TemQ,s=,end=1612447229/state=YBvhmhCp/reftag=83628141/media=hls/55/353/2/88624472.m3u8");
         System.out.println(m3u8Info);
     }
 
