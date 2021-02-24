@@ -9,9 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +40,16 @@ public class Download {
     private ParamInfo paramInfo;
     private List<SegmentFileInfo> segmentFileInfos;
     private M3u8Info m3u8Info;
-
-    public Download(ParamInfo paramInfo) {
+    private DefaultTableModel model;
+    private Vector<Object> tableData;
+    private Vector<String> coulm;
+    private List<ParamInfo> dataList;
+    public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Object> tableData, Vector<String> coulm, List<ParamInfo> dataList) {
         this.paramInfo = paramInfo;
+        this.model=model;
+        this.tableData=tableData;
+        this.coulm = coulm;
+        this.dataList = dataList;
         init();
     }
 
@@ -61,6 +75,19 @@ public class Download {
 
     private void init() {
         if (paramInfo != null) {
+        	paramInfo.setTaskStatus(1);
+			try {
+				String content = JsonUtils.parseJsonString(dataList);
+				File file = new File("./data.json");
+				if(!file.exists()) file.createNewFile();
+				Files.write(file.toPath(), content.getBytes(Charset.forName("UTF-8")), StandardOpenOption.WRITE);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             //创建分段文件下载线程池
             if (paramInfo.getCore() <= 0) {
                 threadPoolExecutor = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("segmentationTask", new ThreadGroup("segmentationTask")));
@@ -167,6 +194,7 @@ public class Download {
      * @param baseUrl
      * @param segmentFileInfo
      */
+    private int count=0;
     private void downAndTry(String baseUrl, SegmentFileInfo segmentFileInfo) {
         try {
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
@@ -174,6 +202,14 @@ public class Download {
                 log.info("缓存路径：{}", tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts");
                 segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
                 log.info("下载完成：{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
+//                tableData.stream().forEach(t->{
+//                	Vector<String> rowDatas = (Vector<String>)t;
+//                	if(rowDatas.get(2).equals(paramInfo.getName()) && rowDatas.get(1).equals(paramInfo.getUrl())) {
+//                		rowDatas.set(4, (count / segmentFileInfos.size())+ "%");
+//                	}
+//                });
+//        		model.setDataVector(tableData, coulm);
+        		
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {
                 //重试次数用完关闭当前线程池

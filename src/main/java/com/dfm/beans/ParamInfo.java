@@ -15,7 +15,7 @@ public class ParamInfo implements Serializable {
     private String key;
     private int core;
     private int tryNum;
-    //0,停止，1 开始，2 暂停
+    //0,停止，1 开始，2 暂停，3 完成
     private int taskStatus;
     public ParamInfo() {
     }
@@ -27,6 +27,7 @@ public class ParamInfo implements Serializable {
         this.key = key;
         this.core = core;
         this.tryNum = tryNum;
+        this.taskStatus=0;
     }
 
     public String getName() {

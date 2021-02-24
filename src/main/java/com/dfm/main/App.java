@@ -1,7 +1,7 @@
 package com.dfm.main;
 
 import com.dfm.beans.ParamInfo;
-import com.dfm.form.MainWindow;
+//import com.dfm.form.MainWindow;
 import com.dfm.utils.JsonUtils;
 import com.dfm.utils.ThreadFacotryImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,18 +25,20 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
-        MainWindow mainWindow = new MainWindow();
+//        MainWindow mainWindow = new MainWindow();
 
-        mainWindow.setVisible(true);
-        mainWindow.setDefaultLookAndFeelDecorated(true);
-        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        mainWindow.setVisible(true);
+//        mainWindow.setDefaultLookAndFeelDecorated(true);
+//        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	String hexToStr = hexToStr("74, 75, 54, 109, 84, 76, 100, 116, 71, 99, 120, 56, 109, 98, 113, 103");
+    	System.out.println(hexToStr);
     }
 
     public static void start(String content, String key) throws JsonProcessingException {
         content = content.replace(" ", "");
         if (threadPoolExecutor == null || threadPoolExecutor.isShutdown()) {
             threadPoolExecutor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("taskName", new ThreadGroup("task")));
-            MainWindow.setTaskState(1);
+//            MainWindow.setTaskState(1);
         }
         List<ParamInfo> paramInfos = JsonUtils.parseJsonList(content, LinkedList.class, ParamInfo.class);
         try {
@@ -45,7 +47,7 @@ public class App {
                     if (StringUtils.isNotBlank(key)) {
                         paramInfo.setKey(hexToStr(key));
                     }
-                    Download download = new Download(paramInfo);
+                    Download download = new Download(paramInfo, null, null, null,null);
                     download.start();
                 });
             });
@@ -53,7 +55,7 @@ public class App {
             while (true) {
                 if (threadPoolExecutor.getCompletedTaskCount() == paramInfos.size()) {
                     threadPoolExecutor.shutdown();
-                    MainWindow.setTaskState(0);
+//                    MainWindow.setTaskState(0);
                     break;
                 }
                 try {
@@ -63,7 +65,7 @@ public class App {
                 }
             }
         } catch (Exception e) {
-            MainWindow.setTaskState(0);
+//            MainWindow.setTaskState(0);
         }
     }
 

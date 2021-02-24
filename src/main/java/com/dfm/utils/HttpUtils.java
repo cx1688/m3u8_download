@@ -1,14 +1,6 @@
 package com.dfm.utils;
 
 import okhttp3.*;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
