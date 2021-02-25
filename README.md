@@ -2,27 +2,14 @@
 解析和下载(Parsing and downloading)
 
 
-支持m3u8格式的解析与下载,加密视频文件也可以完成下载,并可以转码为mp4视频,简陋的ui界面
+支持m3u8格式的解析与下载,加密视频文件也可以完成下载,并可以转码为mp4视频
 
+json保存数据
 
-```json
-[
-  {
-    "name": "下载内容1",
-    "url": "https://vd1381747414.grazy.cn/oa_8714737206b7201a14f5017a72a0c6af.m3u8?pm3u8&e=1611590953&token=jKas2qY3GBfgRW5tXpDq026ezFmT3DMkjpMLBYzF:gj8ceMP19yBo_AScJb2uwE-gI8g=&id=903",
-    "path": "/media/bluesky/Share/,
-    "key": null,
-    "core": 8,
-    "tryNum": 16
-  },
-  {
-    "name": "下载内容2",
-    "url": "https://vd1381747414.grazy.cn/oa_8714737206b7201a14f5017a72a0c6af.m3u8?pm3u8&e=1611590953&token=jKas2qY3GBfgRW5tXpDq026ezFmT3DMkjpMLBYzF:gj8ceMP19yBo_AScJb2uwE-gI8g=&id=903",
-    "path": "/media/bluesky/Share/",
-    "key": null,
-    "core": 8,
-    "tryNum": 16
-  }
-]
-```
-![img.png](img.png)
+自动开始任务
+
+下载完成合并成mp4并使用ffmpeg简单转下流
+
+右键表格新增
+
+![img_1.png](img_1.png)

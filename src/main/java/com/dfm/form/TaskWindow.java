@@ -75,6 +75,7 @@ public class TaskWindow {
 		frame.setBounds(100, 100, 511, 141);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setTitle("Task");
 		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
 		try {
 			BeautyEyeLNFHelper.launchBeautyEyeLNF();

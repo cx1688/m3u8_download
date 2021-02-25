@@ -134,6 +134,7 @@ public class NewWindow {
 		frmMudownload.setBounds(100, 100, 924, 520);
 		frmMudownload.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMudownload.getContentPane().setLayout(null);
+		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
 		try {
 			BeautyEyeLNFHelper.launchBeautyEyeLNF();
 		} catch (Exception e) {
