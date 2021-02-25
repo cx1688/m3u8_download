@@ -35,6 +35,7 @@ import com.dfm.main.Download;
 import com.dfm.utils.JsonUtils;
 import com.dfm.utils.ThreadFacotryImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import javax.swing.JTextArea;
 
 public class NewWindow {
 
@@ -48,6 +49,8 @@ public class NewWindow {
 	private String paramFile = "./data.json";
 	private ExecutorService executorService = Executors.newFixedThreadPool(5,
 			new ThreadFacotryImpl("task", new ThreadGroup("MainTask")));
+	private JTextArea textArea;
+	private JScrollPane scrollPane_1;
 
 	/**
 	 * Launch the application.
@@ -141,11 +144,20 @@ public class NewWindow {
 			e.printStackTrace();
 		}
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 12, 900, 466);
+		scrollPane.setBounds(12, 12, 900, 329);
 		frmMudownload.getContentPane().add(scrollPane);
 		createPopupMenu();
 		table = new JTable(model);
 		scrollPane.setViewportView(table);
+		
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(12, 345, 900, 133);
+		frmMudownload.getContentPane().add(scrollPane_1);
+		
+		textArea = new JTextArea();
+		textArea.setWrapStyleWord(true);
+		scrollPane_1.setViewportView(textArea);
+		textArea.setLineWrap(true);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -220,7 +232,7 @@ public class NewWindow {
 
 			dataList.stream().filter(t -> t.getTaskStatus() == 0).forEach(paramInfo -> {
 				executorService.execute(() -> {
-					new Download(paramInfo, model, tableData, coulm, dataList).start();
+					new Download(paramInfo, model, tableData, coulm, dataList,textArea).start();
 
 				});
 			});

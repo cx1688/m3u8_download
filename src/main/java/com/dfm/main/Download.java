@@ -44,12 +44,14 @@ public class Download {
     private Vector<Object> tableData;
     private Vector<String> coulm;
     private List<ParamInfo> dataList;
-    public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Object> tableData, Vector<String> coulm, List<ParamInfo> dataList) {
+    private JTextArea textArea;
+    public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Object> tableData, Vector<String> coulm, List<ParamInfo> dataList, JTextArea textArea) {
         this.paramInfo = paramInfo;
         this.model=model;
         this.tableData=tableData;
         this.coulm = coulm;
         this.dataList = dataList;
+        this.textArea = textArea;
         init();
     }
 
@@ -75,7 +77,7 @@ public class Download {
 
     private void init() {
         if (paramInfo != null) {
-        	paramInfo.setTaskStatus(1);
+
 			try {
 				String content = JsonUtils.parseJsonString(dataList);
 				File file = new File("./data.json");
@@ -88,6 +90,7 @@ public class Download {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        	paramInfo.setTaskStatus(1);
             //创建分段文件下载线程池
             if (paramInfo.getCore() <= 0) {
                 threadPoolExecutor = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("segmentationTask", new ThreadGroup("segmentationTask")));
@@ -105,6 +108,7 @@ public class Download {
 
     public void start() {
         log.info("开始任务：{}", paramInfo);
+        textArea.append("开始任务："+paramInfo);
         startTask();
     }
 
@@ -132,6 +136,7 @@ public class Download {
                 jsonStr = FileUtil.readStrByFile(data.getAbsolutePath());
                 m3u8Info = JsonUtils.readJson(jsonStr, M3u8Info.class);
                 log.info("读取保存的信息：{}", m3u8Info);
+                textArea.append("读取保存的信息：" + m3u8Info+ "\n");
             } catch (FileNotFoundException | JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -140,6 +145,7 @@ public class Download {
         if (m3u8Info == null) {
             m3u8Info = this.resolve.resolveByCommon(paramInfo.getUrl());
             log.info("解析的信息：{}", m3u8Info);
+            textArea.append("解析的信息：" + m3u8Info+ "\n");
         }
         return m3u8Info;
     }
@@ -159,7 +165,7 @@ public class Download {
                     File target = new File(paramInfo.getPath() + File.separator + paramInfo.getName() + ".mp4");
                     if (segmentFileInfos.size() == source.listFiles().length) {
                         //合并文件
-                        MergeUtils.getINSTANCE().merge(source, target, false, true);
+                        MergeUtils.getINSTANCE().merge(source, target, true, true);
                         break;
                     }
                 }
@@ -200,8 +206,11 @@ public class Download {
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
                 log.info("缓存路径：{}", tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts");
+                textArea.append("缓存路径：" + tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts\n");
                 segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
                 log.info("下载完成：{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
+                textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl())+ "\n");
+                textArea.setCaretPosition(textArea.getText().length());
 //                tableData.stream().forEach(t->{
 //                	Vector<String> rowDatas = (Vector<String>)t;
 //                	if(rowDatas.get(2).equals(paramInfo.getName()) && rowDatas.get(1).equals(paramInfo.getUrl())) {
