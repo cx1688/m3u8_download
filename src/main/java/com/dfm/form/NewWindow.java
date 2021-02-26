@@ -35,6 +35,8 @@ import com.dfm.main.Download;
 import com.dfm.utils.JsonUtils;
 import com.dfm.utils.ThreadFacotryImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.JTextArea;
 
 public class NewWindow {
@@ -265,25 +267,30 @@ public class NewWindow {
 		return result;
 	}
     static String hexToStr(String key) {
-        if (StringUtils.isBlank(key)) {
-            return null;
-        }
-        boolean flag = false;
-        if (key.indexOf("0x") != -1 || key.indexOf("0X") != -1) {
-            key = key.replace("0x", "").replace("0X", "");
-            flag = true;
-        }
-        String[] bys = key.split(",");
-        byte[] bytes = new byte[bys.length];
-        int a = 0;
-        for (int i = 0; i < bys.length; i++) {
-            if (flag) {
-                a = Integer.parseInt(bys[i].trim(), 16);
-            } else {
-                a = Integer.parseInt(bys[i].trim());
-            }
-            bytes[i] = (byte) a;
-        }
-        return bys.length == 1 ? key : new String(bytes);
-    }
+		return getString(key);
+	}
+
+	@Nullable
+	public static String getString(String key) {
+		if (StringUtils.isBlank(key)) {
+			return null;
+		}
+		boolean flag = false;
+		if (key.indexOf("0x") != -1 || key.indexOf("0X") != -1) {
+			key = key.replace("0x", "").replace("0X", "");
+			flag = true;
+		}
+		String[] bys = key.split(",");
+		byte[] bytes = new byte[bys.length];
+		int a = 0;
+		for (int i = 0; i < bys.length; i++) {
+			if (flag) {
+				a = Integer.parseInt(bys[i].trim(), 16);
+			} else {
+				a = Integer.parseInt(bys[i].trim());
+			}
+			bytes[i] = (byte) a;
+		}
+		return bys.length == 1 ? key : new String(bytes);
+	}
 }

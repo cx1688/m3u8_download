@@ -145,7 +145,7 @@ public class Download {
         if (m3u8Info == null) {
             m3u8Info = this.resolve.resolveByCommon(paramInfo.getUrl());
             log.info("解析的信息：{}", m3u8Info);
-            textArea.append("解析的信息：" + m3u8Info+ "\n");
+//            textArea.append("解析的信息：" + m3u8Info+ "\n");
         }
         return m3u8Info;
     }
@@ -165,7 +165,9 @@ public class Download {
                     File target = new File(paramInfo.getPath() + File.separator + paramInfo.getName() + ".mp4");
                     if (segmentFileInfos.size() == source.listFiles().length) {
                         //合并文件
+                        textArea.append("**********************开始合并文件**********************");
                         MergeUtils.getINSTANCE().merge(source, target, true, true);
+                        textArea.append("**********************合 并 完 成**********************");
                         break;
                     }
                 }
@@ -211,14 +213,8 @@ public class Download {
                 log.info("下载完成：{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
                 textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl())+ "\n");
                 textArea.setCaretPosition(textArea.getText().length());
-//                tableData.stream().forEach(t->{
-//                	Vector<String> rowDatas = (Vector<String>)t;
-//                	if(rowDatas.get(2).equals(paramInfo.getName()) && rowDatas.get(1).equals(paramInfo.getUrl())) {
-//                		rowDatas.set(4, (count / segmentFileInfos.size())+ "%");
-//                	}
-//                });
-//        		model.setDataVector(tableData, coulm);
-        		
+                System.out.println(count);
+                count++;
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {
                 //重试次数用完关闭当前线程池

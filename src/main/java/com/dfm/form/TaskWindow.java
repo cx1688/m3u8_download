@@ -1,6 +1,6 @@
 package com.dfm.form;
 
-import java.awt.Label;
+import java.awt.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,8 +18,13 @@ import com.dfm.beans.ParamInfo;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
@@ -96,6 +101,22 @@ public class TaskWindow {
 
 		urlText = new JTextField();
 		urlText.setBounds(102, 12, 400, 20);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable contents = clipboard.getContents(null);
+		if(contents!=null){
+			if(contents.isDataFlavorSupported(DataFlavor.stringFlavor)){
+				try {
+					String text = (String) contents.getTransferData(DataFlavor.stringFlavor);
+					if(text!=null && text.lastIndexOf(".m3u8")>0){
+						urlText.setText(text);
+					}
+				} catch (UnsupportedFlavorException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		frame.getContentPane().add(urlText);
 		urlText.setColumns(10);
 
