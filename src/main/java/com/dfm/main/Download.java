@@ -93,7 +93,7 @@ public class Download {
         	paramInfo.setTaskStatus(1);
             //创建分段文件下载线程池
             if (paramInfo.getCore() <= 0) {
-                threadPoolExecutor = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("segmentationTask", new ThreadGroup("segmentationTask")));
+                threadPoolExecutor = new ThreadPoolExecutor(32, 32, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("segmentationTask", new ThreadGroup("segmentationTask")));
             } else {
                 threadPoolExecutor = new ThreadPoolExecutor(paramInfo.getCore(), paramInfo.getCore(), 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("segmentationTask", new ThreadGroup("segmentationTask")));
             }
@@ -145,7 +145,6 @@ public class Download {
         if (m3u8Info == null) {
             m3u8Info = this.resolve.resolveByCommon(paramInfo.getUrl());
             log.info("解析的信息：{}", m3u8Info);
-//            textArea.append("解析的信息：" + m3u8Info+ "\n");
         }
         return m3u8Info;
     }
@@ -165,9 +164,9 @@ public class Download {
                     File target = new File(paramInfo.getPath() + File.separator + paramInfo.getName() + ".mp4");
                     if (segmentFileInfos.size() == source.listFiles().length) {
                         //合并文件
-                        textArea.append("**********************开始合并文件**********************");
-                        MergeUtils.getINSTANCE().merge(source, target, true, true);
-                        textArea.append("**********************合 并 完 成**********************");
+                        textArea.append("**********************开始合并文件**********************\n");
+                        MergeUtils.getINSTANCE().merge(source, target, false, true);
+                        textArea.append("**********************合 并 完 成**********************\n");
                         break;
                     }
                 }
@@ -190,8 +189,8 @@ public class Download {
         byte[] bytes = HttpUtils.getBytes(resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
         if (StringUtils.isNotBlank(paramInfo.getKey()) && "QINIU-PROTECTION-10".equals(segmentFileInfo.getMethod())) {
             bytes = AESUtils.decrypt(bytes, AESUtils.loadSecretKey(paramInfo.getKey()), segmentFileInfo.getIv());
-        } else if (StringUtils.isNotBlank(segmentFileInfo.getKey()) && "AES-128".equals(segmentFileInfo.getMethod())) {
-            bytes = AESUtils.decode(segmentFileInfo.getKey(), bytes);
+        } else if (segmentFileInfo.getKey()!=null && segmentFileInfo.getKey().length>0 && "AES-128".equals(segmentFileInfo.getMethod())) {
+                bytes = AESUtils.decode(segmentFileInfo.getKey(), bytes);
         }
         return bytes;
     }
@@ -205,6 +204,7 @@ public class Download {
     private int count=0;
     private void downAndTry(String baseUrl, SegmentFileInfo segmentFileInfo) {
         try {
+
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
                 log.info("缓存路径：{}", tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts");
@@ -223,6 +223,7 @@ public class Download {
             }
 
         } catch (Exception e) {
+            log.error("重试失败原因：{}",e.getMessage());
             if (paramInfo.getTryNum() > segmentFileInfo.getTryCount()) {
                 segmentFileInfo.setTryCount(segmentFileInfo.getTryCount() + 1);
                 downAndTry(baseUrl, segmentFileInfo);

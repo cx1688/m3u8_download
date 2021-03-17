@@ -61,7 +61,6 @@ public interface Resolve {
      * 写出文件并
      * @param bytes
      * @param tempPath
-     * @param fileName
      * @return
      */
     default boolean writeFileAsTs(byte[] bytes, String tempPath) {

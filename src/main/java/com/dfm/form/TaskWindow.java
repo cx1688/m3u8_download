@@ -11,7 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
+//import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
 import com.dfm.beans.ParamInfo;
 
@@ -81,13 +81,13 @@ public class TaskWindow {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Task");
-		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
-		try {
-			BeautyEyeLNFHelper.launchBeautyEyeLNF();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
+//		try {
+//			BeautyEyeLNFHelper.launchBeautyEyeLNF();
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		UIManager.put("RootPane.setupButtonVisible", false);
 		JLabel lblNewLabel = new JLabel("M3U8链接:");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -133,7 +133,7 @@ public class TaskWindow {
 		savePathText.setBounds(102, 35, 300, 20);
 		frame.getContentPane().add(savePathText);
 		savePathText.setColumns(10);
-
+		savePathText.setText("./");
 		JButton btnNewButton = new JButton("选择文件夹");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

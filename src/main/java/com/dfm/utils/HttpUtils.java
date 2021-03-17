@@ -1,6 +1,8 @@
 package com.dfm.utils;
 
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -11,6 +13,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,8 +24,51 @@ import java.util.concurrent.TimeUnit;
  * @create: 2020-12-23 15:02
  */
 public class HttpUtils {
+    public static void main(String[] args) throws IOException {
+//        byte [] s = HttpUtils.getBytes("https://app.xiaoe-tech.com/get_video_key.php?edk=CiD22A6pSuOPbefa64MBh36rWJK2m02SLTjvtWfjMhJS6BCO08TAChiaoOvUBCokYjRhNjFiNTgtMmVhNy00OWYxLTgwZGMtZTE0NTIyODc5YWIy&fileId=5285890812979196458&keySource=VodBuildInKMS");
+        byte [] s = HttpUtils.getBytes("https://app.xiaoe-tech.com/get_video_key.php?edk=CiD22A6pSuOPbefa64MBh36rWJK2m02SLTjvtWfjMhJS6BCO08TAChiaoOvUBCokYjRhNjFiNTgtMmVhNy00OWYxLTgwZGMtZTE0NTIyODc5YWIy&fileId=5285890812979196458&keySource=VodBuildInKMS");
+        System.out.println(Arrays.toString(s));
+        int [] b = new int[s.length];
+        for (int i = 0; i < s.length; i++) {
+            if(s[i]<0){
+               b[i] = s[i]%0xFF;
+            }else{
+                b[i] = s[i];
+            }
+        }
+        System.out.println(-45&0xFF);
+        System.out.println(Arrays.toString(b));
+        System.out.println(hexToStr(Arrays.toString(s).replaceAll("\\[","").replaceAll("]","")));
+        System.out.println(hexToStr(Arrays.toString(b).replaceAll("\\[","").replaceAll("]","")));
+        System.out.println(Base64.getEncoder().encodeToString(s));
+    }
+    static String hexToStr(String key) {
+        return getString(key);
+    }
 
-
+    @Nullable
+    public static String getString(String key) {
+        if (StringUtils.isBlank(key)) {
+            return null;
+        }
+        boolean flag = false;
+        if (key.indexOf("0x") != -1 || key.indexOf("0X") != -1) {
+            key = key.replace("0x", "").replace("0X", "");
+            flag = true;
+        }
+        String[] bys = key.split(",");
+        byte[] bytes = new byte[bys.length];
+        int a = 0;
+        for (int i = 0; i < bys.length; i++) {
+            if (flag) {
+                a = Integer.parseInt(bys[i].trim(), 16);
+            } else {
+                a = Integer.parseInt(bys[i].trim());
+            }
+            bytes[i] = (byte) a;
+        }
+        return bys.length == 1 ? key : new String(bytes);
+    }
     public static String get(String url) throws IOException {
         Response response = request(url);
         try {

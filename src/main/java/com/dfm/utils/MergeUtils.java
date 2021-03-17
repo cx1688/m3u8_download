@@ -23,13 +23,8 @@ public class MergeUtils {
     }
 
     public static void main(String[] args) {
-//        new MergeUtils().merge(new File("/home/bluesky/IdeaProjects/m3u8_project/temp/01-VIP-Redis核心数据结构与高性能原理"), new File("/home/bluesky/Download/01-VIP-Redis核心数据结构与高性能原理.mp4"), false);
+        new MergeUtils().merge(new File("E:\\m3u8_download\\temp\\农家的媳妇 篠田步美"), new File("./极农家的媳妇 篠田步美.mp4"), false,true);
         //file:///media/bluesky/Share/null
-        File file = new File("/media/bluesky/Share/null");
-        File[] files = file.listFiles();
-        for (File file1 : files) {
-            System.out.println(file1.getName());
-        }
     }
 
     /**
@@ -69,12 +64,10 @@ public class MergeUtils {
                             //是否删除缓存文件
                             if (isDeleteTemp)
                                 file.delete();
-
                         }
                         File file = new File(savePath.getParent() + File.separator + savePath.getName().substring(0, savePath.getName().lastIndexOf(".")) + "_output" + savePath.getName().substring(savePath.getName().lastIndexOf(".")));
                         if(isCodec)
                             EncodeVideo.encodeCopy(savePath,file);
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

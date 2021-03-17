@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
+//import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
 import javax.swing.JScrollPane;
 import com.dfm.beans.ParamInfo;
@@ -80,11 +80,9 @@ public class NewWindow {
 		coulm.add("名称");
 		coulm.add("路径");
 		coulm.add("进度");
-
 		initialize();
 		setEmptyTableData();
 		model.setDataVector(tableData, coulm);
-		
 		File file = new File(paramFile);
 		if (file.exists()) {
 			byte[] bytes;
@@ -94,7 +92,6 @@ public class NewWindow {
 						ParamInfo.class);
 				dataList.stream().forEach(t -> {
 					Vector<String> rowData = new Vector<String>();
-
 					int localtion = setEmptyLocaltion();
 					if (localtion > -1) {
 						rowData.add((localtion + 1) + "");
@@ -111,8 +108,6 @@ public class NewWindow {
 						rowData.add("0%");
 						tableData.add(rowData);
 					}
-
-		
 				});
 				model.setDataVector(tableData, coulm);
 			} catch (IOException e) {
@@ -139,13 +134,13 @@ public class NewWindow {
 		frmMudownload.setBounds(100, 100, 924, 520);
 		frmMudownload.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMudownload.getContentPane().setLayout(null);
-		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
-		try {
-			BeautyEyeLNFHelper.launchBeautyEyeLNF();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
+//		try {
+//			BeautyEyeLNFHelper.launchBeautyEyeLNF();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(12, 12, 900, 329);
 		frmMudownload.getContentPane().add(scrollPane);

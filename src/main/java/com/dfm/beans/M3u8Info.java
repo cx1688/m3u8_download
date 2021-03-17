@@ -14,7 +14,7 @@ import java.util.List;
 public class M3u8Info implements Serializable {
     private List<SegmentFileInfo>segmentFileInfos;
     private String baseUrl="";
-
+    private boolean hasKey;
     public List<SegmentFileInfo> getSegmentFileInfos() {
         return segmentFileInfos;
     }
@@ -29,6 +29,14 @@ public class M3u8Info implements Serializable {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public boolean isHasKey() {
+        return hasKey;
+    }
+
+    public void setHasKey(boolean hasKey) {
+        this.hasKey = hasKey;
     }
 
     @Override

@@ -19,7 +19,7 @@ public class SegmentFileInfo implements Serializable {
      */
     private String method;
     private String iv;
-    private String key;
+    private byte[] key;
     private String url;
     private double time;
     private boolean isDownload;
@@ -31,7 +31,7 @@ public class SegmentFileInfo implements Serializable {
     public SegmentFileInfo() {
     }
 
-    public SegmentFileInfo(String method, String iv, String key, String url, double time) {
+    public SegmentFileInfo(String method, String iv, byte[] key, String url, double time) {
         this.method = method;
         this.iv = iv;
         this.key = key;
@@ -55,11 +55,11 @@ public class SegmentFileInfo implements Serializable {
         this.iv = iv;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 

@@ -8,10 +8,16 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.StandardOpenOption;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Properties;
 
 /**
@@ -34,6 +40,14 @@ public class AESUtils {
         return cipher.doFinal(source);
     }
 
+    public static void main(String[] args) throws Exception {
+//       7/zuH3rxh5ZNYHJ/237mmA==
+//        C:\Users\dufen\Downloads\v.f100230.ts
+        byte[] bytes = Files.readAllBytes(new File("C:\\Users\\dufen\\Downloads\\v.f100230.ts").toPath());
+        byte[] decode = Base64.getDecoder().decode("7/zuH3rxh5ZNYHJ/237mmA==");
+        byte[] decode1 = AESUtils.decode(decode, bytes);
+        Files.write(new File("./1.mp4").toPath(),decode1, StandardOpenOption.CREATE_NEW);
+    }
     /**
      * 初始化
      *
@@ -45,6 +59,15 @@ public class AESUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static byte[] decode(byte[] key,byte[] input) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(key);
+        Properties properties = new Properties();
+        properties.setProperty(CryptoCipherFactory.CLASSES_KEY, CryptoCipherFactory.CipherProvider.JCE.getClassName());
+        CryptoCipher cipher = Utils.getCipherInstance("AES/CBC/PKCS5Padding", properties);
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
+        return getBytes(input, cipher);
     }
     /**
      * 解密
