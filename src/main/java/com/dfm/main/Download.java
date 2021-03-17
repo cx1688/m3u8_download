@@ -45,10 +45,11 @@ public class Download {
     private Vector<String> coulm;
     private List<ParamInfo> dataList;
     private JTextArea textArea;
+
     public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Object> tableData, Vector<String> coulm, List<ParamInfo> dataList, JTextArea textArea) {
         this.paramInfo = paramInfo;
-        this.model=model;
-        this.tableData=tableData;
+        this.model = model;
+        this.tableData = tableData;
         this.coulm = coulm;
         this.dataList = dataList;
         this.textArea = textArea;
@@ -78,19 +79,19 @@ public class Download {
     private void init() {
         if (paramInfo != null) {
 
-			try {
-				String content = JsonUtils.parseJsonString(dataList);
-				File file = new File("./data.json");
-				if(!file.exists()) file.createNewFile();
-				Files.write(file.toPath(), content.getBytes(Charset.forName("UTF-8")), StandardOpenOption.WRITE);
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	paramInfo.setTaskStatus(1);
+            try {
+                String content = JsonUtils.parseJsonString(dataList);
+                File file = new File("./data.json");
+                if (!file.exists()) file.createNewFile();
+                Files.write(file.toPath(), content.getBytes(Charset.forName("UTF-8")), StandardOpenOption.WRITE);
+            } catch (JsonProcessingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            paramInfo.setTaskStatus(1);
             //创建分段文件下载线程池
             if (paramInfo.getCore() <= 0) {
                 threadPoolExecutor = new ThreadPoolExecutor(32, 32, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFacotryImpl("segmentationTask", new ThreadGroup("segmentationTask")));
@@ -108,7 +109,7 @@ public class Download {
 
     public void start() {
         log.info("开始任务：{}", paramInfo);
-        textArea.append("开始任务："+paramInfo);
+        textArea.append("开始任务：" + paramInfo);
         startTask();
     }
 
@@ -136,7 +137,7 @@ public class Download {
                 jsonStr = FileUtil.readStrByFile(data.getAbsolutePath());
                 m3u8Info = JsonUtils.readJson(jsonStr, M3u8Info.class);
                 log.info("读取保存的信息：{}", m3u8Info);
-                textArea.append("读取保存的信息：" + m3u8Info+ "\n");
+                textArea.append("读取保存的信息：" + m3u8Info + "\n");
             } catch (FileNotFoundException | JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -189,8 +190,8 @@ public class Download {
         byte[] bytes = HttpUtils.getBytes(resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
         if (StringUtils.isNotBlank(paramInfo.getKey()) && "QINIU-PROTECTION-10".equals(segmentFileInfo.getMethod())) {
             bytes = AESUtils.decrypt(bytes, AESUtils.loadSecretKey(paramInfo.getKey()), segmentFileInfo.getIv());
-        } else if (segmentFileInfo.getKey()!=null && segmentFileInfo.getKey().length>0 && "AES-128".equals(segmentFileInfo.getMethod())) {
-                bytes = AESUtils.decode(segmentFileInfo.getKey(), bytes);
+        } else if (segmentFileInfo.getKey() != null && segmentFileInfo.getKey().length > 0 && "AES-128".equals(segmentFileInfo.getMethod())) {
+            bytes = AESUtils.decode(segmentFileInfo.getKey(), bytes);
         }
         return bytes;
     }
@@ -201,19 +202,18 @@ public class Download {
      * @param baseUrl
      * @param segmentFileInfo
      */
-    private int count=0;
+    private int count = 0;
+
     private void downAndTry(String baseUrl, SegmentFileInfo segmentFileInfo) {
         try {
 
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
-                log.info("缓存路径：{}", tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts");
                 textArea.append("缓存路径：" + tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts\n");
                 segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
-                log.info("下载完成：{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()));
-                textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl())+ "\n");
+                textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()) + "\n");
                 textArea.setCaretPosition(textArea.getText().length());
-                System.out.println(count);
+
                 count++;
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {
@@ -223,7 +223,7 @@ public class Download {
             }
 
         } catch (Exception e) {
-            log.error("重试失败原因：{}",e.getMessage());
+            log.error("重试失败原因：{}", e.getMessage());
             if (paramInfo.getTryNum() > segmentFileInfo.getTryCount()) {
                 segmentFileInfo.setTryCount(segmentFileInfo.getTryCount() + 1);
                 downAndTry(baseUrl, segmentFileInfo);

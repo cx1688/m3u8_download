@@ -183,7 +183,6 @@ public class NewWindow {
 //		JMenuItem editItem = new JMenuItem("编辑");
 		JMenuItem delItem = new JMenuItem("删除");
 		newItem.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
@@ -199,7 +198,6 @@ public class NewWindow {
 			int selectedRow = table.getSelectedRow();
 			Vector<String> object = (Vector<String>) tableData.get(selectedRow);
 			removeDataList(object);
-
 			tableData.remove(selectedRow);
 			model.setDataVector(tableData, coulm);
 		});

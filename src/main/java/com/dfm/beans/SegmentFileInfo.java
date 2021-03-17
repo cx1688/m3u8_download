@@ -24,6 +24,8 @@ public class SegmentFileInfo implements Serializable {
     private double time;
     private boolean isDownload;
     private int tryCount;
+    private String resolution;
+    private boolean isM3u8;
     /**
      * 保存路径
      */
@@ -101,6 +103,22 @@ public class SegmentFileInfo implements Serializable {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
+    }
+
+    public String getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
+    }
+
+    public boolean isM3u8() {
+        return isM3u8;
+    }
+
+    public void setM3u8(boolean m3u8) {
+        isM3u8 = m3u8;
     }
 
     @Override

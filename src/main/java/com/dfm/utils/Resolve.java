@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 public interface Resolve {
@@ -69,12 +70,10 @@ public interface Resolve {
             file.getParentFile().mkdirs();
         }
         try {
-            Files.write(file.toPath(), bytes);
+            Files.write(file.toPath(), bytes, StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        if (file.exists())
-//            EncodeVideo.encodeCopy(file, new File(tempPath + fileName));
         return file.exists() ? file.isFile() : file.exists();
     }
 

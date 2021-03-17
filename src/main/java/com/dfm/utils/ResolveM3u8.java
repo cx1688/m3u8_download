@@ -28,7 +28,7 @@ public class ResolveM3u8 implements Resolve {
     public static void main(String[] args) {
 //        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://videozm.whqhyg.com:8091/20210302/QBmmzlTY/index.m3u8");
 //        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://1252524126.vod2.myqcloud.com/9764a7a5vodtransgzp1252524126/149439bf5285890812979196458/drm/v.f100230.m3u8");
-        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://video2.posh-hotels.com:8091/20200828/mdyd00759-Part-1/index.m3u8");
+        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://videozm.whqhyg.com:8091/20210124/xt6hPTTo/index.m3u8");
         System.out.println(m3u8Info);
     }
 
@@ -90,7 +90,8 @@ public class ResolveM3u8 implements Resolve {
             content = HttpUtils.get(m3u8Url);
             String[] strs = content.split("\n");
             List<SegmentFileInfo> segmentFileInfos = new LinkedList<>();
-            String tempMethod = null; byte[] tempKey = null;
+            String tempMethod = null;
+            byte[] tempKey = null;
             String keyUrl = null;
             for (int i = 0; i < strs.length; i++) {
                 if (StringUtils.isBlank(keyUrl)) {
@@ -101,7 +102,16 @@ public class ResolveM3u8 implements Resolve {
                 }
                 //查找m3u8位置
                 if (lookup(strs[i], ".m3u8")) {
-                    segmentFileInfos.add(new SegmentFileInfo(null, null, null, subStr(strs[i]), 0));
+                    SegmentFileInfo segmentFileInfo = new SegmentFileInfo(null, null, null, subStr(strs[i]), 0);
+                    segmentFileInfo.setM3u8(true);
+                    try {
+                        if (lookup(strs[i - 1], "RESOLUTION=")) {
+                            segmentFileInfo.setResolution(subStr(strs[i - 1], "RESOLUTION="));
+                        }
+                    } catch (Exception e) {
+                        log.error("下标越界就不管了");
+                    }
+                    segmentFileInfos.add(segmentFileInfo);
                 }
                 if (lookup(strs[i], ".ts") || lookup(strs[i], ".mp4") || lookup(strs[i], "ts")) {
                     String url = strs[i];
@@ -129,40 +139,61 @@ public class ResolveM3u8 implements Resolve {
                 String baseUrl = valueOf(m3u8Url, true);
                 if (HttpUtils.isSuccess(repleaceUrl(baseUrl + segmentFileInfos.get(0).getUrl()))) {
                     m3u8Info.setBaseUrl(baseUrl);
-
                 }
                 baseUrl = valueOf(m3u8Url, false);
                 if (HttpUtils.isSuccess(repleaceUrl(baseUrl + segmentFileInfos.get(0).getUrl()))) {
                     m3u8Info.setBaseUrl(baseUrl);
                 }
+                if (segmentFileInfos.size() > 1) {
+                    segmentFileInfos.removeIf(t -> {
+                        if (t.isM3u8()) {
+                            String[] str = t.getResolution().split("x");
+                            if (str.length == 2) {
+                                if (Integer.parseInt(str[0]) < 1300) {
+                                    return true;
+                                }
+//                                else if (Integer.parseInt(str[0]) < 900) {
+//                                    return true;
+//                                } else if (Integer.parseInt(str[0]) < 500) {
+//                                    return true;
+//                                }
+
+                            }
+                        }
+                        return false;
+                    });
+                }
                 if (segmentFileInfos.get(0).getUrl().contains(".m3u8")) {
                     return resolveByCommon(repleaceUrl(m3u8Info.getBaseUrl() + segmentFileInfos.get(0).getUrl()));
                 }
-
-
             }
             try {
-                if (keyUrl.indexOf("http") > -1) {
-                    byte[] bytes = HttpUtils.getBytes(keyUrl);
-                    tempKey = bytes;
-                } else {
-                    tempKey = HttpUtils.getBytes((m3u8Info.getBaseUrl() + keyUrl));
-                }
-                if (m3u8Info.isHasKey() && tempKey!=null) {
+                /**
+                 * 加密密钥直接采用字节流
+                 */
+                if (StringUtils.isNotBlank(keyUrl))
+                    if (keyUrl.indexOf("http") > -1) {
+                        byte[] bytes = HttpUtils.getBytes(keyUrl);
+                        tempKey = bytes;
+                    } else {
+                        tempKey = HttpUtils.getBytes((m3u8Info.getBaseUrl() + keyUrl));
+                    }
+                if (m3u8Info.isHasKey() && tempKey != null) {
                     byte[] finalTempKey = tempKey;
-
                     segmentFileInfos.stream().forEach(segmentFileInfo -> segmentFileInfo.setKey(finalTempKey));
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("解析异常：{}", e);
             }
             m3u8Info.setSegmentFileInfos(segmentFileInfos);
 
         } catch (Exception e) {
+            e.printStackTrace();
             log.info("解析M3u8出错{}", e.getMessage());
         }
-        if(m3u8Info.getSegmentFileInfos()==null){
-            JOptionPane.showMessageDialog(null,"解析失败");
+        if (m3u8Info.getSegmentFileInfos() == null) {
+            JOptionPane.showMessageDialog(null, "解析失败");
         }
         return m3u8Info;
     }
