@@ -41,12 +41,12 @@ public class Download {
     private List<SegmentFileInfo> segmentFileInfos;
     private M3u8Info m3u8Info;
     private DefaultTableModel model;
-    private Vector<Object> tableData;
+    private Vector<Vector<String>> tableData;
     private Vector<String> coulm;
     private List<ParamInfo> dataList;
     private JTextArea textArea;
 
-    public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Object> tableData, Vector<String> coulm, List<ParamInfo> dataList, JTextArea textArea) {
+    public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Vector<String>> tableData, Vector<String> coulm, List<ParamInfo> dataList, JTextArea textArea) {
         this.paramInfo = paramInfo;
         this.model = model;
         this.tableData = tableData;
@@ -78,11 +78,11 @@ public class Download {
 
     private void init() {
         if (paramInfo != null) {
-
             try {
                 String content = JsonUtils.parseJsonString(dataList);
                 File file = new File("./data.json");
-                if (!file.exists()) file.createNewFile();
+                if (!file.exists())
+                    file.createNewFile();
                 Files.write(file.toPath(), content.getBytes(Charset.forName("UTF-8")), StandardOpenOption.WRITE);
             } catch (JsonProcessingException e) {
                 // TODO Auto-generated catch block
@@ -109,7 +109,7 @@ public class Download {
 
     public void start() {
         log.info("开始任务：{}", paramInfo);
-        textArea.append("开始任务：" + paramInfo);
+        textArea.append("开始任务：" + paramInfo.getName() + "\n");
         startTask();
     }
 
@@ -118,7 +118,12 @@ public class Download {
      */
     private void startTask() {
         log.info("需要下载的分段文件：{}个;", segmentFileInfos.size());
-        segmentFileInfos.stream().filter(t -> !t.isDownload()).forEach(t -> threadPoolExecutor.execute(() -> downAndTry(m3u8Info.getBaseUrl(), t)));
+        segmentFileInfos.stream().filter(t -> t.isDownload()).forEach(t -> count++);
+        //当下载完成数不等于所需下载数时，继续下载
+        if (count != segmentFileInfos.size()) {
+            segmentFileInfos.stream().filter(t -> !t.isDownload()).forEach(t -> threadPoolExecutor.execute(() -> downAndTry(m3u8Info.getBaseUrl(), t)));
+        }
+        log.info("下载完成：" + count + "/" + segmentFileInfos.size());
         closeTask(paramInfo, segmentFileInfos);
     }
 
@@ -137,7 +142,7 @@ public class Download {
                 jsonStr = FileUtil.readStrByFile(data.getAbsolutePath());
                 m3u8Info = JsonUtils.readJson(jsonStr, M3u8Info.class);
                 log.info("读取保存的信息：{}", m3u8Info);
-                textArea.append("读取保存的信息：" + m3u8Info + "\n");
+//                textArea.append("读取保存的信息：" + m3u8Info + "\n");
             } catch (FileNotFoundException | JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -159,7 +164,7 @@ public class Download {
     public void closeTask(ParamInfo paramInfo, List<SegmentFileInfo> segmentFileInfos) {
         while (true) {
             try {
-                if (threadPoolExecutor.getCompletedTaskCount() == segmentFileInfos.size()) {
+                if (count == segmentFileInfos.size()) {
                     threadPoolExecutor.shutdown();
                     File source = new File(tempPath + File.separator + paramInfo.getName() + File.separator);
                     File target = new File(paramInfo.getPath() + File.separator + paramInfo.getName() + ".mp4");
@@ -209,12 +214,25 @@ public class Download {
 
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
-                textArea.append("缓存路径：" + tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts\n");
+//                textArea.setText("");
+//                textArea.append("缓存路径：" + tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts\n");
                 segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
-                textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()) + "\n");
+//                textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()) + "\n");
+                count++;
+                synchronized (this) {
+                    tableData.stream().forEach(t -> {
+
+                        if (paramInfo.getName().equals(t.get(2))) {
+                            model.getValueAt(tableData.indexOf(t),4);
+                            model.setValueAt((count / segmentFileInfos.size()) + "%", tableData.indexOf(t), 4);
+                        }
+
+                    });
+
+                    textArea.setText("任务名称：" + paramInfo.getName() + "\n下载进度：" + count + "/" + segmentFileInfos.size());
+                }
                 textArea.setCaretPosition(textArea.getText().length());
 
-                count++;
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {
                 //重试次数用完关闭当前线程池
@@ -223,6 +241,7 @@ public class Download {
             }
 
         } catch (Exception e) {
+//            e.printStackTrace();
             log.error("重试失败原因：{}", e.getMessage());
             if (paramInfo.getTryNum() > segmentFileInfo.getTryCount()) {
                 segmentFileInfo.setTryCount(segmentFileInfo.getTryCount() + 1);

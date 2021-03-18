@@ -45,11 +45,11 @@ public class NewWindow {
 	private JTable table;
 	private JPopupMenu jPopupMenu;
 	private Vector<String> coulm = new Vector<>();
-	private Vector<Object> tableData = new Vector<>();
+	private Vector<Vector<String>> tableData = new Vector<>();
 	private List<ParamInfo> dataList = new LinkedList<>();
 	DefaultTableModel model = new DefaultTableModel();
 	private String paramFile = "./data.json";
-	private ExecutorService executorService = Executors.newFixedThreadPool(5,
+	private ExecutorService executorService = Executors.newFixedThreadPool(1,
 			new ThreadFacotryImpl("task", new ThreadGroup("MainTask")));
 	private JTextArea textArea;
 	private JScrollPane scrollPane_1;
@@ -96,14 +96,14 @@ public class NewWindow {
 					if (localtion > -1) {
 						rowData.add((localtion + 1) + "");
 						rowData.add(t.getUrl());
-						rowData.add(t.getName());
+						rowData.add(t.getName().trim());
 						rowData.add(t.getPath());
 						rowData.add("0%");
 						tableData.set(localtion, rowData);
 					} else {
 						rowData.add((tableData.size() + 1) + "");
 						rowData.add(t.getUrl());
-						rowData.add(t.getName());
+						rowData.add(t.getName().trim());
 						rowData.add(t.getPath());
 						rowData.add("0%");
 						tableData.add(rowData);
@@ -119,7 +119,7 @@ public class NewWindow {
 
 	private void setEmptyTableData() {
 		// TODO Auto-generated method stub
-		for (int i = 0; i < 28; i++) {
+		for (int i = 0; i < 10000; i++) {
 			tableData.add(new Vector<>());
 		}
 	}
@@ -228,8 +228,9 @@ public class NewWindow {
 
 			dataList.stream().filter(t -> t.getTaskStatus() == 0).forEach(paramInfo -> {
 				executorService.execute(() -> {
-					new Download(paramInfo, model, tableData, coulm, dataList,textArea).start();
-
+					if(paramInfo.getTaskStatus()==0){
+						new Download(paramInfo, model, tableData, coulm, dataList,textArea).start();
+					}
 				});
 			});
 

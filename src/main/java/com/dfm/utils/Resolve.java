@@ -70,7 +70,10 @@ public interface Resolve {
             file.getParentFile().mkdirs();
         }
         try {
-            Files.write(file.toPath(), bytes, StandardOpenOption.CREATE_NEW);
+            if(!file.exists()) {
+                Files.write(file.toPath(), bytes, StandardOpenOption.CREATE_NEW);
+            }
+            Files.write(file.toPath(), bytes, StandardOpenOption.WRITE);
         } catch (IOException e) {
             e.printStackTrace();
         }

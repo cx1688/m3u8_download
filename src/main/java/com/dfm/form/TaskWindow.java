@@ -54,7 +54,7 @@ public class TaskWindow {
 //		});
 //	}
 	private List<ParamInfo> dataList;
-	private Vector<Object> tableData;
+	private Vector<Vector<String>> tableData;
 	private DefaultTableModel model;
 	private Vector<String> columnData;
 	private int count;
@@ -62,7 +62,7 @@ public class TaskWindow {
 	/**
 	 * Create the application.
 	 */
-	public TaskWindow(List<ParamInfo> dataList, Vector<Object> tableData, DefaultTableModel model,
+	public TaskWindow(List<ParamInfo> dataList, Vector<Vector<String>> tableData, DefaultTableModel model,
 			Vector<String> columnData) {
 		this.dataList = dataList;
 		this.tableData = tableData;
@@ -175,14 +175,14 @@ public class TaskWindow {
 				if (localtion > -1) {
 					rowData.add((localtion+1) + "");
 					rowData.add(paramInfo.getUrl());
-					rowData.add(paramInfo.getName());
+					rowData.add(paramInfo.getName().trim().replace("\n",""));
 					rowData.add(paramInfo.getPath());
 					rowData.add("0%");
 					tableData.set(localtion, rowData);
 				} else {
 					rowData.add((tableData.size() + 1) + "");
 					rowData.add(paramInfo.getUrl());
-					rowData.add(paramInfo.getName());
+					rowData.add(paramInfo.getName().trim().replace("\n",""));
 					rowData.add(paramInfo.getPath());
 					rowData.add("0%");
 					tableData.add(rowData);
