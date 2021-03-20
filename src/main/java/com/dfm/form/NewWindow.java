@@ -88,7 +88,7 @@ public class NewWindow {
 			byte[] bytes;
 			try {
 				bytes = Files.readAllBytes(file.toPath());
-				dataList = JsonUtils.parseJsonList(new String(bytes, Charset.forName("UTF-8")), LinkedList.class,
+				dataList = JsonUtils.parseJsonList(new String(bytes, Charset.forName("UTF-8")).replace("\n",""), LinkedList.class,
 						ParamInfo.class);
 				dataList.stream().forEach(t -> {
 					Vector<String> rowData = new Vector<String>();
@@ -213,7 +213,7 @@ public class NewWindow {
 			String content = JsonUtils.parseJsonString(dataList);
 			File file = new File("./data.json");
 			if(!file.exists()) file.createNewFile();
-			Files.write(file.toPath(), content.getBytes(Charset.forName("UTF-8")), StandardOpenOption.WRITE);
+			Files.write(file.toPath(), content.replace("\n","").getBytes(Charset.forName("UTF-8")), StandardOpenOption.WRITE);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

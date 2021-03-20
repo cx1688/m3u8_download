@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 public class SegmentFileInfo implements Serializable {
     /**
-     * 方法
+     * 方法完成
      */
     private String method;
     private String iv;
@@ -104,7 +104,7 @@ public class SegmentFileInfo implements Serializable {
     public void setSavePath(String savePath) {
         this.savePath = savePath;
     }
-
+    //分辨率
     public String getResolution() {
         return resolution;
     }
