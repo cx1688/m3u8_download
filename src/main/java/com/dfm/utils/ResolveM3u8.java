@@ -28,7 +28,7 @@ public class ResolveM3u8 implements Resolve {
     public static void main(String[] args) {
 //        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://videozm.whqhyg.com:8091/20210302/QBmmzlTY/index.m3u8");
 //        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://1252524126.vod2.myqcloud.com/9764a7a5vodtransgzp1252524126/149439bf5285890812979196458/drm/v.f100230.m3u8");
-        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://videozm.whqhyg.com:8091/20210124/xt6hPTTo/index.m3u8");
+        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://1252524126.vod2.myqcloud.com/9764a7a5vodtransgzp1252524126/819fc5fb5285890812977497416/drm/v.f100230.m3u8");
         System.out.println(m3u8Info);
     }
 
@@ -96,7 +96,7 @@ public class ResolveM3u8 implements Resolve {
             for (int i = 0; i < strs.length; i++) {
                 if (StringUtils.isBlank(keyUrl)) {
                     if (lookup(strs[i], "URI=")) {
-                        keyUrl = subStr(strs[i], "URI=").replaceAll("\"", "");
+                        keyUrl = subStr(strs[i], "URI=\"","\",").replaceAll("\"", "");
                         m3u8Info.setHasKey(true);
                     }
                 }
@@ -113,7 +113,7 @@ public class ResolveM3u8 implements Resolve {
                     }
                     segmentFileInfos.add(segmentFileInfo);
                 }
-                if (lookup(strs[i], ".ts") || lookup(strs[i], ".mp4") || lookup(strs[i], "ts")) {
+                if (lookup(strs[i], ".ts") || lookup(strs[i], ".mp4")) {
                     String url = strs[i];
                     String method = null;
                     String iv = null;
@@ -149,7 +149,7 @@ public class ResolveM3u8 implements Resolve {
                         if (t.isM3u8()) {
                             String[] str = t.getResolution().split("x");
                             if (str.length == 2) {
-                                if (Integer.parseInt(str[0]) < 1300) {
+                                if (Integer.parseInt(str[0]) >1300 ) {
                                     return true;
                                 }
 //                                else if (Integer.parseInt(str[0]) < 900) {
