@@ -109,7 +109,7 @@ public class Download {
 
     public void start() {
         log.info("开始任务：{}", paramInfo);
-        textArea.append("开始任务：" + paramInfo.getName() + "\n");
+        textArea.setText("开始任务：" + paramInfo.getName() + "\n");
         startTask();
     }
 
@@ -221,15 +221,12 @@ public class Download {
                 count++;
                 synchronized (this) {
                     tableData.stream().forEach(t -> {
-
                         if (paramInfo.getName().equals(t.get(2))) {
                             model.getValueAt(tableData.indexOf(t),4);
                             model.setValueAt((count / segmentFileInfos.size()) + "%", tableData.indexOf(t), 4);
                         }
-
                     });
-
-                    textArea.setText("任务名称：" + paramInfo.getName() + "\n下载进度：" + count + "/" + segmentFileInfos.size());
+                    textArea.setText("任务名称：" + paramInfo.getName() + "\n下载进度：" + count + "/" + segmentFileInfos.size()+"\n");
                 }
                 textArea.setCaretPosition(textArea.getText().length());
 
