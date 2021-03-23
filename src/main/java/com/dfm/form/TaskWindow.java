@@ -170,15 +170,15 @@ public class TaskWindow {
 						key.getText(), 16, 255);
 				dataList.add(paramInfo);
 				Vector<String> rowData = new Vector<String>();
-
 				int localtion = setEmptyLocaltion();
-				if (localtion > -1) {
+				if (localtion > 0) {
 					rowData.add((localtion+1) + "");
 					rowData.add(paramInfo.getUrl());
 					rowData.add(paramInfo.getName().trim().replace("\n",""));
 					rowData.add(paramInfo.getPath());
 					rowData.add("0%");
 					tableData.set(localtion, rowData);
+					model.setDataVector(tableData, columnData);
 				} else {
 					rowData.add((tableData.size() + 1) + "");
 					rowData.add(paramInfo.getUrl());
@@ -186,9 +186,8 @@ public class TaskWindow {
 					rowData.add(paramInfo.getPath());
 					rowData.add("0%");
 					tableData.add(rowData);
+					model.setDataVector(tableData,columnData);
 				}
-
-				model.setDataVector(tableData, columnData);
 				frame.dispose();
 			}
 

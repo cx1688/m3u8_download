@@ -47,7 +47,9 @@ public class App {
                     if (StringUtils.isNotBlank(key)) {
 //                        paramInfo.setKey(hexToStr(key));
                     }
-                    Download download = new Download(paramInfo, null, null, null,null,null);
+                    Download download = new Download(paramInfo,
+//                            null, null,
+                            null,null,null,null);
                     download.start();
                 });
             });

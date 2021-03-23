@@ -15,6 +15,8 @@ public class M3u8Info implements Serializable {
     private List<SegmentFileInfo>segmentFileInfos;
     private String baseUrl="";
     private boolean hasKey;
+    private long current;
+    private long total;
     public List<SegmentFileInfo> getSegmentFileInfos() {
         return segmentFileInfos;
     }
@@ -37,6 +39,22 @@ public class M3u8Info implements Serializable {
 
     public void setHasKey(boolean hasKey) {
         this.hasKey = hasKey;
+    }
+
+    public long getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(long current) {
+        this.current = current;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
     }
 
     @Override

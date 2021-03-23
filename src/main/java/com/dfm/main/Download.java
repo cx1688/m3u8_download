@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,7 +18,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -41,20 +40,33 @@ public class Download {
     private List<SegmentFileInfo> segmentFileInfos;
     private M3u8Info m3u8Info;
     private DefaultTableModel model;
-    private Vector<Vector<String>> tableData;
-    private Vector<String> coulm;
+
+    private JTable jTable;
     private List<ParamInfo> dataList;
     private JTextArea textArea;
+    private TableModel tableModel;
 
-    public Download(ParamInfo paramInfo, DefaultTableModel model, Vector<Vector<String>> tableData, Vector<String> coulm, List<ParamInfo> dataList, JTextArea textArea) {
+    public Download(ParamInfo paramInfo, DefaultTableModel model,
+
+                    List<ParamInfo> dataList, JTable jTable, JTextArea textArea) {
         this.paramInfo = paramInfo;
         this.model = model;
-        this.tableData = tableData;
-        this.coulm = coulm;
+        this.jTable = jTable;
         this.dataList = dataList;
         this.textArea = textArea;
+        this.tableModel = jTable.getModel();
         init();
     }
+
+    int positioningTask() {
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            if (paramInfo.getName().equals(tableModel.getValueAt(i, 2))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     private void check(ParamInfo paramInfo) {
         if (paramInfo != null) {
@@ -121,7 +133,12 @@ public class Download {
         segmentFileInfos.stream().filter(t -> t.isDownload()).forEach(t -> count++);
         //当下载完成数不等于所需下载数时，继续下载
         if (count != segmentFileInfos.size()) {
-            segmentFileInfos.stream().filter(t -> !t.isDownload()).forEach(t -> threadPoolExecutor.execute(() -> downAndTry(m3u8Info.getBaseUrl(), t)));
+            segmentFileInfos.stream().filter(t -> !t.isDownload()).forEach(t -> threadPoolExecutor.execute(() -> {
+                if(positioningTask()==-1){
+                    return;
+                }
+                downAndTry(m3u8Info.getBaseUrl(), t);
+            }));
         }
         log.info("下载完成：" + count + "/" + segmentFileInfos.size());
         closeTask(paramInfo, segmentFileInfos);
@@ -141,7 +158,7 @@ public class Download {
             try {
                 jsonStr = FileUtil.readStrByFile(data.getAbsolutePath());
                 m3u8Info = JsonUtils.readJson(jsonStr, M3u8Info.class);
-                log.info("读取保存的信息：{}", m3u8Info);
+//                log.info("读取保存的信息：{}", m3u8Info);
 //                textArea.append("读取保存的信息：" + m3u8Info + "\n");
             } catch (FileNotFoundException | JsonProcessingException e) {
                 e.printStackTrace();
@@ -150,7 +167,7 @@ public class Download {
         //解析
         if (m3u8Info == null) {
             m3u8Info = this.resolve.resolveByCommon(paramInfo.getUrl());
-            log.info("解析的信息：{}", m3u8Info);
+//            log.info("解析的信息：{}", m3u8Info);
         }
         return m3u8Info;
     }
@@ -164,7 +181,7 @@ public class Download {
     public void closeTask(ParamInfo paramInfo, List<SegmentFileInfo> segmentFileInfos) {
         while (true) {
             try {
-                if (count == segmentFileInfos.size()) {
+                if (threadPoolExecutor.getActiveCount() == 0) {
                     threadPoolExecutor.shutdown();
                     File source = new File(tempPath + File.separator + paramInfo.getName() + File.separator);
                     File target = new File(paramInfo.getPath() + File.separator + paramInfo.getName() + ".mp4");
@@ -211,32 +228,32 @@ public class Download {
 
     private void downAndTry(String baseUrl, SegmentFileInfo segmentFileInfo) {
         try {
-
             byte[] bytes = getBytes(baseUrl, segmentFileInfo);
             if (bytes != null) {
-//                textArea.setText("");
-//                textArea.append("缓存路径：" + tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts\n");
                 segmentFileInfo.setDownload(resolve.writeFileAsTs(bytes, tempPath + File.separator + paramInfo.getName() + File.separator + resolve.customFileNameFromIndex(segmentFileInfos.indexOf(segmentFileInfo)) + ".ts"));
-//                textArea.append("下载完成:" + resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()) + "\n");
                 count++;
                 synchronized (this) {
-                    tableData.stream().forEach(t -> {
-                        if (paramInfo.getName().equals(t.get(2))) {
-                            model.getValueAt(tableData.indexOf(t),4);
-                            model.setValueAt((count / segmentFileInfos.size()) + "%", tableData.indexOf(t), 4);
-                        }
-                    });
-                    textArea.setText("任务名称：" + paramInfo.getName() + "\n下载进度：" + count + "/" + segmentFileInfos.size()+"\n");
+                    int index = positioningTask();
+                    if (index == -1) {
+                        return;
+                    }
+                    if (paramInfo.getName().equals(tableModel.getValueAt(index, 2))) {
+                        long progress = Math.round(count / (double) segmentFileInfos.size() * 100);
+                        tableModel.setValueAt(progress + "%", index, 4);
+                        m3u8Info.setCurrent(count);
+                        m3u8Info.setTotal(segmentFileInfos.size());
+                        paramInfo.setProgress(progress);
+                        jTable.setModel(tableModel);
+                    }
+
                 }
                 textArea.setCaretPosition(textArea.getText().length());
-
                 resolve.writeString(JsonUtils.parseJsonString(m3u8Info), dataPath + File.separator + paramInfo.getName() + ".json");
             } else if (segmentFileInfo.getTryCount() >= paramInfo.getTryNum()) {
                 //重试次数用完关闭当前线程池
                 log.info("任務已結束", paramInfo.getName());
                 threadPoolExecutor.shutdown();
             }
-
         } catch (Exception e) {
 //            e.printStackTrace();
             log.error("重试失败原因：{}", e.getMessage());
@@ -244,6 +261,7 @@ public class Download {
                 segmentFileInfo.setTryCount(segmentFileInfo.getTryCount() + 1);
                 downAndTry(baseUrl, segmentFileInfo);
                 log.error("重试url:{},次数{},boolean:{}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl()), segmentFileInfo.getTryCount(), paramInfo.getTryNum() > segmentFileInfo.getTryCount());
+                textArea.append("重试url:{url},次数:{frequency}".replaceAll("\\{url}", resolve.repleaceUrl(baseUrl + segmentFileInfo.getUrl())).replaceAll("\\{frequency}", segmentFileInfo.getTryCount() + "\n"));
                 try {
                     TimeUnit.MILLISECONDS.sleep(3000);
                 } catch (InterruptedException interruptedException) {

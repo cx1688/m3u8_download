@@ -17,6 +17,7 @@ public class ParamInfo implements Serializable {
     private int tryNum;
     //0,停止，1 开始，2 暂停，3 完成
     private int taskStatus;
+    private long progress;
     public ParamInfo() {
     }
 
@@ -84,6 +85,14 @@ public class ParamInfo implements Serializable {
 
     public void setTaskStatus(int taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public long getProgress() {
+        return progress;
+    }
+
+    public void setProgress(long progress) {
+        this.progress = progress;
     }
 
     @Override
