@@ -190,6 +190,12 @@ public class Download {
                         textArea.append("**********************开始合并文件**********************\n");
                         MergeUtils.getINSTANCE().merge(source, target, false, true);
                         textArea.append("**********************合 并 完 成**********************\n");
+                        try {
+                            paramInfo.setTaskStatus(1);
+                            resolve.writeString(JsonUtils.parseJsonString(dataList),  "./data.json");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     }
                 }

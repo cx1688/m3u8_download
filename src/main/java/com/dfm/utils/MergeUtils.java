@@ -14,19 +14,11 @@ import java.util.Arrays;
  */
 public class MergeUtils {
     private static final MergeUtils INSTANCE = new MergeUtils();
-
     public MergeUtils() {
     }
-
     public static MergeUtils getINSTANCE() {
         return INSTANCE;
     }
-
-    public static void main(String[] args) {
-        new MergeUtils().merge(new File("E:\\m3u8_download\\temp\\农家的媳妇 篠田步美"), new File("./极农家的媳妇 篠田步美.mp4"), false,true);
-        //file:///media/bluesky/Share/null
-    }
-
     /**
      * @param tempDir
      * @param savePath

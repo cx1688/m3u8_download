@@ -28,7 +28,7 @@ public class ResolveM3u8 implements Resolve {
     public static void main(String[] args) {
 //        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://videozm.whqhyg.com:8091/20210302/QBmmzlTY/index.m3u8");
 //        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://1252524126.vod2.myqcloud.com/9764a7a5vodtransgzp1252524126/149439bf5285890812979196458/drm/v.f100230.m3u8");
-        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://video.huishenghuo888888.com/putong/20210318/Iefhn9r7/500kb/hls/index.m3u8");
+        M3u8Info m3u8Info = getINSTANCE().resolveByCommon("https://1258712167.vod2.myqcloud.com/fb8e6c92vodtranscq1258712167/b0e36c075285890815726052351/drm/voddrm.token.dWluPTM5NDk0MjY5ODt2b2RfdHlwZT0wO2NpZD0yMzE1MTY7dGVybV9pZD0xMDI3NTQwMzU7cGxza2V5PTAwMDQwMDAwYmEwYzc2ZTMyOTFjYzE5Yzg3ZDg5NjBlNjI3MDJiN2EzNmJlMTc2ZDljMDAwNWY5NjY4OGNkNGQ2Nzk0YTM3OTY2YjZiNGQ0ZTUzODRmMmI7cHNrZXk9.master_playlist.m3u8?t=60815a5e&exper=0&us=7467073381750618698&sign=c666ea93b7f8084a31468106825a30d3");
         System.out.println(m3u8Info);
     }
 
@@ -149,15 +149,9 @@ public class ResolveM3u8 implements Resolve {
                         if (t.isM3u8()) {
                             String[] str = t.getResolution().split("x");
                             if (str.length == 2) {
-                                if (Integer.parseInt(str[0]) >1300 ) {
+                                if (Integer.parseInt(str[0]) <1400 ) {
                                     return true;
                                 }
-//                                else if (Integer.parseInt(str[0]) < 900) {
-//                                    return true;
-//                                } else if (Integer.parseInt(str[0]) < 500) {
-//                                    return true;
-//                                }
-
                             }
                         }
                         return false;

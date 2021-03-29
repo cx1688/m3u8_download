@@ -17,7 +17,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -79,18 +78,17 @@ public class NewWindow {
                 bytes = Files.readAllBytes(file.toPath());
                 dataList = JsonUtils.parseJsonList(new String(bytes, StandardCharsets.UTF_8).replace("\n", ""), LinkedList.class,
                         ParamInfo.class);
-                setEmptyTableData(dataList.size());
+                setEmptyTableData(dataList.size()+1);
                 dataList.stream().forEach(t -> {
                     Vector<String> rowData = new Vector<String>();
                     int localtion = setEmptyLocaltion();
-                    if (localtion > 0) {
+                    if (localtion >= 0) {
                         rowData.add((localtion + 1) + "");
                         rowData.add(t.getUrl());
                         rowData.add(t.getName().trim());
                         rowData.add(t.getPath());
                         rowData.add(t.getProgress() + "%");
                         tableData.set(localtion, rowData);
-                        model.setDataVector(tableData, coulm);
                     } else {
                         rowData.add((tableData.size() + 1) + "");
                         rowData.add(t.getUrl());
@@ -98,15 +96,14 @@ public class NewWindow {
                         rowData.add(t.getPath());
                         rowData.add(t.getProgress() + "%");
                         tableData.add(rowData);
-                        model.setDataVector(tableData, coulm);
                     }
+                    model.setDataVector(tableData, coulm);
                 });
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else {
-            setEmptyTableData(32);
+            setEmptyTableData(20);
         }
     }
 
@@ -115,6 +112,7 @@ public class NewWindow {
         for (int i = 0; i < count - 1; i++) {
             tableData.add(new Vector<>());
         }
+        model.setDataVector(tableData, coulm);
     }
 
     /**
@@ -124,9 +122,10 @@ public class NewWindow {
         frmMudownload = new JFrame();
         frmMudownload.setResizable(false);
         frmMudownload.setTitle("M3u8Download");
-        frmMudownload.setBounds(100, 100, 924, 520);
+        frmMudownload.setBounds(100, 100, 940,530);
         frmMudownload.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmMudownload.getContentPane().setLayout(null);
+
 //		BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.osLookAndFeelDecorated;
 //		try {
 //			BeautyEyeLNFHelper.launchBeautyEyeLNF();
@@ -140,11 +139,9 @@ public class NewWindow {
         createPopupMenu();
         table = new JTable(model);
         scrollPane.setViewportView(table);
-
         scrollPane_1 = new JScrollPane();
         scrollPane_1.setBounds(12, 345, 900, 133);
         frmMudownload.getContentPane().add(scrollPane_1);
-
         textArea = new JTextArea();
         textArea.setWrapStyleWord(true);
         scrollPane_1.setViewportView(textArea);
@@ -160,7 +157,6 @@ public class NewWindow {
                     table.setRowSelectionInterval(selectRowIndex, selectRowIndex);
                     jPopupMenu.show(table, e.getX(), e.getY());
                 }
-
             }
 
         });
@@ -207,7 +203,7 @@ public class NewWindow {
             File file = new File("./data.json");
             if (!file.exists()) {
                 file.createNewFile();
-            }else{
+            } else {
                 file.delete();
                 file.createNewFile();
             }

@@ -9,6 +9,7 @@ import ws.schild.jave.encode.VideoAttributes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -75,5 +76,28 @@ public class EncodeVideo {
         }
     }
 
+    public static void encodeCopys(File file, File target) {
+        VideoAttributes videoAttributes = new VideoAttributes();
+        videoAttributes.setCodec(VideoAttributes.DIRECT_STREAM_COPY);
+        AudioAttributes audioAttributes = new AudioAttributes();
+        audioAttributes.setCodec(AudioAttributes.DIRECT_STREAM_COPY);
+        Encoder encoder = new Encoder();
+        EncodingAttributes encodingAttributes = new EncodingAttributes();
+        encodingAttributes.setVideoAttributes(videoAttributes);
+        encodingAttributes.setAudioAttributes(audioAttributes);
 
+        List<MultimediaObject> list = new ArrayList<>();
+        Arrays.asList(file.listFiles()).stream().map(MultimediaObject::new).forEach(list::add);
+        try {
+            encoder.encode(list, target, encodingAttributes);
+        } catch (EncoderException e) {
+            e.printStackTrace();
+        } finally {
+            file.delete();
+        }
+    }
+
+    public static void main(String[] args) {
+        encodeCopys(new File("temp/2.JVM内存模型深度剖析与优化"), new File("D:\\1.mp4"));
+    }
 }
